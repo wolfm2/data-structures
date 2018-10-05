@@ -5,7 +5,9 @@ var async = require('async');
 var db_credentials = new Object();
 db_credentials.user = 'wolfm2'; //182
 // db_credentials.host = 'dsdemo.c2g7qw1juwkg.us-east-1.rds.amazonaws.com';
-db_credentials.host = 'mydb.ce54cjiwuvvo.us-east-1.rds.amazonaws.com';
+// db_credentials.host = 'mydb.ce54cjiwuvvo.us-east-1.rds.amazonaws.com';
+db_credentials.host = 'instance.ce54cjiwuvvo.us-east-1.rds.amazonaws.com'; // had to create it twice.
+
 
 db_credentials.database = 'mydb';
 db_credentials.password = process.env.AWSRDS_PW;
@@ -17,7 +19,7 @@ var addressesForDb = [{"street":"122 E 37TH ST New York NY ","lat":"40.7483929",
 async.eachSeries(addressesForDb, function(value, callback) {
     const client = new Client(db_credentials);
     client.connect();
-    var thisQuery = "INSERT INTO aalocations VALUES (E'" + value.street + "', " + value.lat + ", " + value.lng + ");";
+    var thisQuery = "INSERT INTO aalocations VALUES (E'" + value.street + "', " + value.lat + ", " + value.lon + ");";
     client.query(thisQuery, (err, res) => {
         console.log(err, res);
         client.end();
