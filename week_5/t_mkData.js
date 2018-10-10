@@ -43,7 +43,8 @@ curEpoch = 1539204661;
 sd = 60 * 60 * 24 // sec in day
 // Exercises - these would in reality have somewhat variable duration/reps
 
-// Good idea but RDS can't do nested objects - redo as key/value pair.
+// Good idea but RDS can't do nested objects - redo as key/value pair. 
+// actually, the feature was added a couple years back.  looking for reference.
 
 //~ russianTwist = {'name':'russian twist', 'reps', '80'} 
 //~ legLift = {'name':'leg lifts', 'reps', '40'}
