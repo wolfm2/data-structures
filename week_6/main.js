@@ -3,7 +3,7 @@
 var fs = require('fs');
 var cheerio = require('cheerio');
 
-var content = fs.readFileSync('aaInfo/m05.html');
+var content = fs.readFileSync('aaInfo/m04.html');
 // load `content` into a cheerio object
 var $ = cheerio.load(content);
 
@@ -27,9 +27,22 @@ function getTimes (elem) {
 }
 
 // details-box 
+function getWchair (elem) {
+	e = $(elem).text();
+	return e.includes('Wheelchair');
+}
+
+// details-box 
+function getTitle (elem) {
+	e = $(elem).find('h4');
+	var text = $(e).text();
+	return text;
+}
+
+// details-box 
 function getDetails (elem) {
-	e = $(elem).find('div')
-	var text = $(e).text()
+	e = $(elem).find('div');
+	var text = $(e).text();
 	return text.replace(/[(\t\n]+/g, '').replace(/ +/g, " ").trim(); // get rid of cruft
 }
 
@@ -37,7 +50,7 @@ function getDetails (elem) {
 function getMType (elem) {
 	var e = Object.assign({}, elem);
 	$(e).find('h4,b,div,span,img').remove();  // remove non-address elements
-	var text = $(e).text().match(/ [BCSTOD][BD ]/g); //.trim();
+	var text = $(e).text().match(/ [BCSTOD][BDp ]/g); //.trim();
 
 	if (text != null) {
 		var lines = [];
@@ -54,14 +67,14 @@ function getMType (elem) {
 function getAddress (elem) {
 	var e = Object.assign({}, elem);
 	$(e).find('h4,b,br,div,span,img').remove();  // remove non-address elements
-	var text = $(e).text().match(/[1-9][\w\W]+,/g)
+	var text = $(e).text().match(/\n\t+?[1-9][\w\W]+,/g)
 	if (text != null) {
 		var lines = [];
 		text[0].split(',').slice(0,-1).forEach(function(d, i) {
 			var line = d;
 			line = line.replace(/ Ave[\w\W]+/, ' Ave.'); // Greedy match Avenue
 			line = line.replace(/ St[\w\W]+| ST[\w\W]+/, ' St.'); // Greedy match Street
-			line = line.replace(/[(\t\n]+/g, '').replace(/ +/g, " ").trim(); // get rid of cruft
+			line = line.replace(/[()\t\n]+/g, '').replace(/ +/g, " ").trim(); // get rid of cruft
 			lines.push(line);
 			});
 	  // console.log(lines);
@@ -73,15 +86,25 @@ function getAddress (elem) {
 	  return null;
 }
 
+// (5) 230 East 60th Street (Basement)
+// (4) BLUEPRINT FOR LIVING no h4
+// subtitle
+// special interest
 // go through all rows
+
 $('tr').each(function(i, elem) {
 	d = {};
 	var adr = getAddress(elem);
-	// console.log(adr)
+	console.log(adr);
+	var ttl = getTitle(elem);
+	var wch = getWchair(elem);
 	var day = getDays(elem);
+	//console.log(day)
 	var tim = getTimes(elem);
 	var det = getDetails(elem);
 	var mty = getMType(elem);
+	//console.log(mty);
+	// mty = [1,2,3,4,5,6,7,7,8,8,7,6,6];
 	
 	if (adr != null) {
 		d['address'] = adr[0];
@@ -91,6 +114,8 @@ $('tr').each(function(i, elem) {
 		day.forEach((d,i) => {
 			meetInfo.push([d, tim[i*2], tim[i*2+1], mty[i]]);
 			});
+		d['title'] = ttl;	
+	  d['wheelc'] = wch;
 	  d['meetings'] = meetInfo;
 	  d['details'] = det;
 		data.push(d);
