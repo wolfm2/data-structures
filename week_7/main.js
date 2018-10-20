@@ -2,6 +2,10 @@
 
 var fs = require('fs');
 var cheerio = require('cheerio');
+var async = require('async'); // npm install async
+
+//var request = require('request'); // npm install request
+var request = require('requestretry'); // npm install request
 
 var data;
 
@@ -139,7 +143,15 @@ function parseData () {
     //~ // console.log("'" + text + "'");
 //~ });
 
-for (var i = 1; i <= 10; i++) {
+// Static part of url
+var baseUrl = "https://geoservices.tamu.edu/Services/Geocode/WebService/GeocoderWebServiceHttpNonParsed_V04_01.aspx?city=New%20York&state=NY&format=json&version=4.01&"
+var apiKey = process.env.TAMU_KEY;
+
+//for (var i = 1; i <= 10; i++) {
+//for (var i = 8; i <= 8; i++) {
+
+i = 10;
+	
 	var content;
 	if (i < 10)
 		content = fs.readFileSync(`aaInfo/m0${i}.html`);
@@ -152,5 +164,27 @@ for (var i = 1; i <= 10; i++) {
 	
 	parseData();
 	
-	fs.writeFileSync(`data/d${i}.json`, JSON.stringify(data));
-}
+	async.eachSeries(data, function(d, callback) {
+		url = `${baseUrl}streetAddress=${d['address']}&apikey=${apiKey}`;
+		
+		request(url, function(err, resp, body) {
+			console.log('Finding: ', d['address']);
+			if (err) {
+				console.log(data);
+				throw err;
+			} else {
+				var tamuGeo = JSON.parse(body);
+				sa = tamuGeo["InputAddress"]["StreetAddress"];
+				lat = tamuGeo["OutputGeocodes"][0]["OutputGeocode"]["Latitude"];
+				lon = tamuGeo["OutputGeocodes"][0]["OutputGeocode"]["Longitude"];
+				d['address'] = sa;
+				d['lat'] = lat;
+				d['lon'] = lon;
+			}
+		});
+	    setTimeout(callback, 1000);
+		}, function() {
+				fs.writeFileSync(`d${i}.json`, JSON.stringify(data));
+			  console.log('*** *** *** *** ***');
+	});
+//}
