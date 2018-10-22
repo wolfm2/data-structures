@@ -20,24 +20,20 @@ var params = {
         //~ ":minDate": {N: new Date("September 1, 2018").valueOf().toString()},
         //~ ":maxDate": {N: new Date("October 16, 2018").valueOf().toString()}
     //~ }
-    //KeyConditionExpression: "startEpochPK between :sEpoch and :eEpoch", // the query expression
-    // KeyConditionExpression: "startEpochPK = :testt", // works!
-    // KeyConditionExpression: "#addr = :bsty and startEpochPK = :testt", // the query expression
     
-    KeyConditionExpression: " startEpochPK = :testt", // the query expression
+    KeyConditionExpression: "dayt = :dayt and startEpochPK BETWEEN :sEpoch AND :eEpoch", // the query expression
     FilterExpression: 'zip = :zip',
-    // KeyConditionExpression: "startEpochPK BETWEEN :sEpoch AND :eEpoch", // the query expression
-    
     
 		//~ ExpressionAttributeNames: { // name substitution, used for reserved words in DynamoDB
         //~ "#addr" : "address"
     //~ },
+    
     ExpressionAttributeValues: { // the query values
-				//~ ":bsty": {S: "Brooklyn"},
-        //~ ":sEpoch": {N: String(1539291000)},
-        //~ ":eEpoch": {N: String(1539636700)}
-        ":zip": {N: String(11216)},
-        ":testt": {N: String(1539204661)}
+				":dayt": {S: "Leg"},
+        ":sEpoch": {N: String(1539291000)},
+        ":eEpoch": {N: String(1539636700)},
+        ":zip": {N: String(11216)}
+        //~ ":testt": {N: String(1539204661)}
     }
 };
 
