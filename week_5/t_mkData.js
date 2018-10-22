@@ -2,7 +2,10 @@ var diaryEntries = [];
 
 class DiaryEntry {
 	
-  constructor(begin, duration, prep, bagel, exercises, exerDuration, location) {
+  constructor(dayt, begin, duration, prep, bagel, exercises, exerDuration, location) {
+		this.dayt = {};
+		this.dayt.S = dayt;
+		
     this.startEpochPK = {};
     this.startEpochPK.N = String(begin);
     
@@ -55,10 +58,10 @@ sd = 60 * 60 * 24 // sec in day
 bedstuy = {'address':'1245 Fulton St.', 'city':'Brooklyn', 'state':'NY', 'zip':'11216'}
 newschool ={'address':'22 E 14th St.', 'city':'New York', 'state':'NY', 'zip':'10003'}
 
-diaryEntries.push(new DiaryEntry(curEpoch, 60, ['drank water', 'reviewed russian twist'], ['everything'], ['legLift', 'russianTwist', 'skullcrushers'], [23,21,11],  bedstuy));
-diaryEntries.push(new DiaryEntry(curEpoch + sd, 45, null, null, ['legLift', 'skullcrushers'], [21,11], bedstuy));
-diaryEntries.push(new DiaryEntry(curEpoch + sd*3, 80, ['drank water'], ['plain'], ['russianTwist', 'eliptical'], [23, 60], bedstuy));
-diaryEntries.push(new DiaryEntry(curEpoch + sd*5, 50, ['stretched', 'drank water'], null, ['russianTwist', 'skullcrushers'], [21, 11], newschool));
-diaryEntries.push(new DiaryEntry(curEpoch + sd*6, 60, ['protein shake', 'ate tofu'], null, ['eliptical', 'skullcrushers'], [45, 12], bedstuy));
+diaryEntries.push(new DiaryEntry('Leg', curEpoch, 60, ['drank water', 'reviewed russian twist'], ['everything'], ['legLift', 'russianTwist', 'skullcrushers'], [23,21,11],  bedstuy));
+diaryEntries.push(new DiaryEntry('Arm', curEpoch + sd, 45, null, null, ['legLift', 'skullcrushers'], [21,11], bedstuy));
+diaryEntries.push(new DiaryEntry('Leg', curEpoch + sd*3, 80, ['drank water'], ['plain'], ['russianTwist', 'eliptical'], [23, 60], bedstuy));
+diaryEntries.push(new DiaryEntry('Core', curEpoch + sd*5, 50, ['stretched', 'drank water'], null, ['russianTwist', 'skullcrushers'], [21, 11], newschool));
+diaryEntries.push(new DiaryEntry('Arm', curEpoch + sd*6, 60, ['protein shake', 'ate tofu'], null, ['eliptical', 'skullcrushers'], [45, 12], bedstuy));
 
 console.log(JSON.stringify(diaryEntries));
