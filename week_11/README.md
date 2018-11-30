@@ -54,7 +54,7 @@ durations:  If the above is highlighted, the data will be converted from seconds
 
 exercise preparation text (if any): No modification of the data will be necessary.
 
-location: No modification of the data will be necessary.  In fact, I only went to two locations during the collection period.  I will likely use the zip to map between Planet Fitness' locations.
+location: No modification of the data will be necessary.  In fact, I only went to two gyms during the collection period.  I will likely use the zip to map between Planet Fitness' locations.
 
 ### Default View
 The default view will be a desktop interface as you can see above.
