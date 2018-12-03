@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Final Projects</title>
+    <style>
+				#run {
+					width: 100px;
+					position: absolute;
+					top: 150px;
+					left: 0px;
+				}
+				.left {
+					width: 100px;
+					z-index: 2;
+				}
+				.right {
+					width: 100px;
+				}
+    </style>
+  </head>
+  <body>
+	<div id="time"></div>
+	<hr>
+  <img id="run" src="img/run-1.gif">
+  <img class="left" src="img/home.png">
+  <img class="right" src="img/school.png">
+  <img class="right" src="img/store.png">
+  <img class="right" src="img/workout.png">
+  <img class="right" src="img/ct.png">
+  </body>
+  <script src="js/jquery.min.js"></script>
+  <script>
+		var sEpoch = 1542220527 - (5 * 60) - 27;	// start
+		var eEpoch = 1543734423;	// end
+	  var cEpoch = sEpoch;			// current
+	  
+	  var trig = 0;  // trigger time to leave home
+	  var dest = 0;  // where to go
+	  var dur = 0;	// how long to stay there
+		var lastTrig = 0;
+		var iSrcIdx = 1;
+		
+		var t = 1542220527;
+		var hr = 60 * 60;
+		var day = hr * 24;
+		
+		var data = [ // trigger, dest, duration
+			[t, 1, hr * 2],
+			[t + day, 2, hr * 3],
+			[t + (day*2), 3, hr * 3],
+			[t + (day*3), 4, hr * 2]
+		];
+		
+		var gIdx = 0;  // global data index
+		
+		function update() {
+			if (dest != 0) {
+				trig += dur;
+				dest = 0; // going home
+				dur = 0;	
+			}	else {
+				trig = data[gIdx][0];
+				dest = data[gIdx][1];
+				dur = data[gIdx][2];
+				gIdx += 1;
+			}
+		}
+		
+		function animate() {
+				if (cEpoch > trig && lastTrig != trig) {
+					
+					iSrcIdx *= -1; // change animation
+					$("#run").attr("src", "img/run" + iSrcIdx + ".gif")
+					
+					lastTrig = trig;
+					
+					sLoc = (100 * dest) + 20 + 'px';
+					console.log(sLoc);
+					
+					if (dest != 0) {
+						$(".right").eq(dest-1).css("z-index","-1");
+						$(".right").css("z-index","3");
+					}
+					
+					$("#run").animate({
+						left: sLoc,
+						}, 1000); 
+						
+					//~ trig += dur;
+					//~ dest = 0; // going home
+					//~ dur = 0;		
+					
+					update();
+				}
+		}
+		
+		function showTime() {
+			strDate = new Date(cEpoch * 1000);
+			//console.log(strDate);
+			$("#time").html(strDate);
+			cEpoch += 10 * 60; // 10min
+			if (cEpoch > eEpoch) {
+				cEpoch = sEpoch;
+				gIdx = 0;
+			}
+			animate();
+		}
+		
+		setInterval(showTime, 50);
+		
+		update()
+		
+  </script>
+</html>
