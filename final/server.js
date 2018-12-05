@@ -243,22 +243,113 @@ app.get('/aameetings', function(req, res) {
     });
 });
 
+
 // respond to requests for /deardiary
-app.get('/deardiary', function(req, res) {
+app.get('/dd-core', function(req, res) {
 
     // Connect to the AWS DynamoDB database
     var dynamodb = new AWS.DynamoDB();
     
     // DynamoDB (NoSQL) query
     var params = {
-        TableName: "aarondiary",
-        KeyConditionExpression: "#tp = :topicName", // the query expression
-        ExpressionAttributeNames: { // name substitution, used for reserved words in DynamoDB
-            "#tp": "topic"
-        },
-        ExpressionAttributeValues: { // the query values
-            ":topicName": { S: "cats" }
+        TableName: "deardiary",
+        //~ KeyConditionExpression: "#tp = :topicName", // the query expression
+        //~ ExpressionAttributeNames: { // name substitution, used for reserved words in DynamoDB
+            //~ "#tp": "topic"
+        //~ },
+        //~ ExpressionAttributeValues: { // the query values
+            //~ ":topicName": { S: "cats" }
+        //~ }
+        
+        
+        KeyConditionExpression: "dayt = :dayt and startEpochPK > :sEpoch", // the query expression
+				//FilterExpression: 'zip = :zip',
+				ExpressionAttributeValues: { // the query values
+						":dayt": {S: "core"},
+		        ":sEpoch": {N: String(0)},
+		        //":zip": {N: String(11216)}
+		        //~ ":testt": {N: String(1539204661)}
+		    }
+    };
+
+    dynamodb.query(params, function(err, data) {
+        if (err) {
+            console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
         }
+        else {
+            res.send(data.Items);
+            console.log('3) responded to request for dear diary data');
+        }
+    });
+
+});
+
+// respond to requests for /deardiary
+app.get('/dd-leg', function(req, res) {
+
+    // Connect to the AWS DynamoDB database
+    var dynamodb = new AWS.DynamoDB();
+    
+    // DynamoDB (NoSQL) query
+    var params = {
+        TableName: "deardiary",
+        //~ KeyConditionExpression: "#tp = :topicName", // the query expression
+        //~ ExpressionAttributeNames: { // name substitution, used for reserved words in DynamoDB
+            //~ "#tp": "topic"
+        //~ },
+        //~ ExpressionAttributeValues: { // the query values
+            //~ ":topicName": { S: "cats" }
+        //~ }
+        
+        
+        KeyConditionExpression: "dayt = :dayt and startEpochPK > :sEpoch", // the query expression
+				//FilterExpression: 'zip = :zip',
+				ExpressionAttributeValues: { // the query values
+						":dayt": {S: "leg"},
+		        ":sEpoch": {N: String(0)},
+		        //":zip": {N: String(11216)}
+		        //~ ":testt": {N: String(1539204661)}
+		    }
+    };
+
+    dynamodb.query(params, function(err, data) {
+        if (err) {
+            console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
+        }
+        else {
+            res.send(data.Items);
+            console.log('3) responded to request for dear diary data');
+        }
+    });
+
+});
+
+// respond to requests for /deardiary
+app.get('/dd-arm', function(req, res) {
+
+    // Connect to the AWS DynamoDB database
+    var dynamodb = new AWS.DynamoDB();
+    
+    // DynamoDB (NoSQL) query
+    var params = {
+        TableName: "deardiary",
+        //~ KeyConditionExpression: "#tp = :topicName", // the query expression
+        //~ ExpressionAttributeNames: { // name substitution, used for reserved words in DynamoDB
+            //~ "#tp": "topic"
+        //~ },
+        //~ ExpressionAttributeValues: { // the query values
+            //~ ":topicName": { S: "cats" }
+        //~ }
+        
+        
+        KeyConditionExpression: "dayt = :dayt and startEpochPK > :sEpoch", // the query expression
+				//FilterExpression: 'zip = :zip',
+				ExpressionAttributeValues: { // the query values
+						":dayt": {S: "arm"},
+		        ":sEpoch": {N: String(0)},
+		        //":zip": {N: String(11216)}
+		        //~ ":testt": {N: String(1539204661)}
+		    }
     };
 
     dynamodb.query(params, function(err, data) {

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Final: Diary</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+<!--
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+-->
+		<style>
+			#prep {
+				border: 4px solid INDIANRED;
+				border-radius: 5px;
+			}
+			body {
+				padding: 10px;
+			}
+		</style>
+  </head>
+  <body>
+    
+    <div class="container">
+		  <div class="row">
+		    <div class="col-sm-4">
+		      <br>
+		      Show me a(n) 
+		      <select id="partition">
+					  <option value="arm">arm</option>
+					  <option value="leg">leg</option>
+					  <option value="core">core</option>
+					</select> day. <br>
+		      <br>
+		      On <select id="date">
+					  <option value="111">Nov 1</option>
+					  <option value="111">Nov 5</option>
+					  <option value="111">Nov 6</option>
+					</select>
+		      <br>
+		      <br>
+		      <div id="loc"></div>
+		      <br>
+		      Preparations:
+		      <div id="prep">
+						Did this<br>
+						did that
+		      </div>
+		    </div>
+		    <div class="col-sm-8" id="icon-container">
+		    </div>
+		  </div>
+		</div>
+		
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+			
+			var dat = [];
+			dat['arm'] = '[{"city":{"S":"Brooklyn"},"zip":{"N":"11216"},"exercises":{"SS":["freeweights","skullcrushers"]},"dayt":{"S":"arm"},"address":{"S":"1245 Fulton St."},"exerDuration":{"NS":["23","22"]},"prep":{"SS":["protein shake"]},"duration":{"N":"45"},"startEpochPK":{"N":"1539734400"},"state":{"S":"NY"}},{"city":{"S":"Brooklyn"},"zip":{"N":"11216"},"exercises":{"SS":["freeweights","pullups","skullcrushers"]},"dayt":{"S":"arm"},"address":{"S":"1245 Fulton St."},"exerDuration":{"NS":["30","13","17"]},"prep":{"SS":["packed gloves","stretched"]},"duration":{"N":"60"},"startEpochPK":{"N":"1540944000"},"state":{"S":"NY"}},{"city":{"S":"Brooklyn"},"zip":{"N":"11216"},"exercises":{"SS":["freeweights","skullcrushers","wrist flex"]},"dayt":{"S":"arm"},"address":{"S":"1245 Fulton St."},"exerDuration":{"NS":["30","20","10"]},"prep":{"SS":["drank water","got gloves","stretched"]},"duration":{"N":"60"},"startEpochPK":{"N":"1541566800"},"state":{"S":"NY"}}]'
+			dat['leg'] = '[{"city":{"S":"Brooklyn"},"zip":{"N":"11216"},"exercises":{"SS":["leg lift","leg press","lunge"]},"dayt":{"S":"leg"},"bagel":{"SS":["plain"]},"address":{"S":"1245 Fulton St."},"exerDuration":{"NS":["15","20","10"]},"prep":{"SS":["drank water","home freeweights"]},"duration":{"N":"45"},"startEpochPK":{"N":"1539129600"},"state":{"S":"NY"}},{"city":{"S":"Brooklyn"},"zip":{"N":"11216"},"exercises":{"SS":["calf raise","leg lift","lunge"]},"dayt":{"S":"leg"},"address":{"S":"1245 Fulton St."},"exerDuration":{"NS":["15","10","25"]},"prep":{"SS":["drank shake","leg stretching"]},"duration":{"N":"50"},"startEpochPK":{"N":"1540339200"},"state":{"S":"NY"}},{"city":{"S":"Brooklyn"},"zip":{"N":"11216"},"exercises":{"SS":["dumbell lunge","leg lift","stationary bike"]},"dayt":{"S":"leg"},"address":{"S":"1245 Fulton St."},"exerDuration":{"NS":["11","9","40"]},"prep":{"SS":["drank water","stretched"]},"duration":{"N":"60"},"startEpochPK":{"N":"1541304000"},"state":{"S":"NY"}},{"city":{"S":"Brooklyn"},"zip":{"N":"11216"},"exercises":{"SS":["dumbell lunge","leg lift","stretching"]},"dayt":{"S":"leg"},"address":{"S":"1245 Fulton St."},"exerDuration":{"NS":["15","20","25"]},"prep":{"SS":["ate apple","drank water"]},"duration":{"N":"60"},"startEpochPK":{"N":"1542153600"},"state":{"S":"NY"}}]'
+			dat['core'] = '[{"city":{"S":"Brooklyn"},"zip":{"N":"11216"},"exercises":{"SS":["front plank","russian twist","stretching"]},"dayt":{"S":"core"},"address":{"S":"1245 Fulton St."},"exerDuration":{"NS":["15","5","25"]},"prep":{"SS":["drank water","stretched"]},"duration":{"N":"45"},"startEpochPK":{"N":"1539475200"},"state":{"S":"NY"}},{"city":{"S":"Brooklyn"},"zip":{"N":"11216"},"exercises":{"SS":["crunch","side plank","stretching"]},"dayt":{"S":"core"},"address":{"S":"1245 Fulton St."},"exerDuration":{"NS":["20","13","17"]},"duration":{"N":"50"},"startEpochPK":{"N":"1540080000"},"state":{"S":"NY"}},{"city":{"S":"Brooklyn"},"zip":{"N":"11201"},"exercises":{"SS":["crunch","russian twist","stretching"]},"dayt":{"S":"core"},"address":{"S":"249 Duffield St."},"exerDuration":{"NS":["15","20","25"]},"prep":{"SS":["drank water"]},"duration":{"N":"60"},"startEpochPK":{"N":"1540684800"},"state":{"S":"NY"}},{"city":{"S":"Brooklyn"},"zip":{"N":"11201"},"exercises":{"SS":["crunch","situps","stretching"]},"dayt":{"S":"core"},"address":{"S":"249 Duffield St."},"exerDuration":{"NS":["15","20","25"]},"prep":{"SS":["ate fruit","home freeweights"]},"duration":{"N":"60"},"startEpochPK":{"N":"1541894400"},"state":{"S":"NY"}},{"city":{"S":"Brooklyn"},"zip":{"N":"11216"},"exercises":{"SS":["side plank","situps"]},"dayt":{"S":"core"},"address":{"S":"1245 Fulton St."},"exerDuration":{"NS":["15","25"]},"duration":{"N":"40"},"startEpochPK":{"N":"1542499200"},"state":{"S":"NY"}},{"city":{"S":"Brooklyn"},"zip":{"N":"11216"},"exercises":{"SS":["front plank","situps","stretching"]},"dayt":{"S":"core"},"address":{"S":"1245 Fulton St."},"exerDuration":{"NS":["15","20","25"]},"prep":{"SS":["ate protein bar"]},"duration":{"N":"60"},"startEpochPK":{"N":"1543363200"},"state":{"S":"NY"}}]'
+			var data;
+			
+			var eTempH = `
+			    <div class="col-sm-3" id="`
+			var eTempFLeg =`">
+			      <img class="icons" width=100 src="img/leg.png"
+			    </div>`
+			var eTempFArm =`">
+			      <img class="icons" width=100 src="img/arm.png"
+			    </div>`
+			var eTempFCore =`">
+			      <img class="icons" width=100 src="img/core.png"
+			    </div>`
+			    
+			var eLeg =  ['calf raise', 'dumbell lunge', 'leg lift', 'leg press', 'lunge', 'stationary bike'];
+			var eArm =  ['freeweights', 'pullups', 'skullcrushers', 'wrist flex'];
+			var eCore = ['crunch', 'front plank', 'russian twist', 'side plank', 'situps', 'stretching'];
+			
+			function init() {
+				eLeg.forEach((d) => {
+					$('#icon-container').append(eTempH + d.replace(/ /g, '-') + eTempFLeg);
+				});
+				eArm.forEach((d) => {
+					$('#icon-container').append(eTempH + d.replace(/ /g, '-') + eTempFArm);
+				});
+				eCore.forEach((d) => {
+					$('#icon-container').append(eTempH + d.replace(/ /g, '-') + eTempFCore);
+				});
+				eLeg.concat(eArm.concat(eCore)).forEach ((d,i) => {
+					// console.log(d.replace(/ /g, '-'));
+					$("#" + d.replace(/ /g, '-')).append("<br>" + d + "<br><div class='dur'></div>");
+					})
+				$(".icons").css("opacity", .1);
+			}
+			
+			function set(idx) {
+				var loc = data[idx].address.S
+				var prep = data[idx].prep.SS
+				var exer = data[idx].exercises.SS
+				var times = data[idx].exerDuration.NS
+				
+				$(".icons").css("opacity", .1);
+				$(".dur").html("0m");
+				
+				exer.forEach((d,i) => {
+						$("#" + d.replace(/ /g, '-') + " .icons").css("opacity", 1);
+						$("#" + d.replace(/ /g, '-') + " .dur").html(times[i] + "m");
+					});
+				
+				$('#prep').html("");
+			  prep.forEach((d,i) => {
+					$('#prep').append(d+"<br>");
+					});
+					
+				$('#loc').html("At the <b>" + loc + "</b> Planet Fitness");
+			}
+		
+			var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+			function get (partition) {
+				
+				// data = JSON.parse(dat[partition]);
+				$.get( "dd-" + partition, function( rv ) {
+					data = rv;
+				  console.log( "Load was performed." );
+				  
+  				// setup dates
+					$('#date').html("");
+					data.forEach((d,i) => {
+						epoch = parseInt(d.startEpochPK.N);
+						dObj = new Date(epoch * 1000)
+						sDate =  months[dObj.getMonth()] + " " + dObj.getDate();
+						$('#date').append("<option value=" + i + ">" + sDate + "</option>");
+					});
+						  
+					set(0);
+				});
+			}
+			
+			$("#partition").change(function() {
+				val = $(this).val();
+				get(val);
+			});
+			
+			$("#date").change(function() {
+				val = $(this).val();
+				set(parseInt(val));
+			});
+			
+			init();
+			get("arm");
+			// set("Bedstuy", ["didnt this","didnt that"], ["calf raise", "skullcrushers", "side plank"], [42,32,66]);
+    </script>
+    
+  </body>
+</html>
