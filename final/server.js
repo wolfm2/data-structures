@@ -98,7 +98,7 @@ se_he = `
 		}
 		
 		function showTime() {
-			strDate = new Date(cEpoch * 1000 + (5 * hr));
+			strDate = new Date((cEpoch - (6 * hr)) * 1000);
 			//console.log(strDate);
 			$("#time").html(strDate);
 			cEpoch += 10 * 60; // 10min
@@ -318,7 +318,7 @@ app.get('/aa', function(req, res) {
             // test [{lat:'40.734636', lon:'-73.994997', meetings:'stuff'}]
             var mappedData = qres.rows.map((d,i) => {
 							var wchair = d.wchair=='0'?'No':'Yes';
-							return {"lat":d.lat, "lon":d.long, "beg":d.tbeg, "end":d.tend, "typ":d.ttype, "title":d.title, "meetings": "<br>" + d.address + "<br>" + d.meta + "<br>" + d.details + " Wheelchair Access: " + wchair}})
+							return {"lat":d.lat, "lon":d.long, "beg":d.tbeg, "end":d.tend, "typ":d.ttype, "title":d.title, "meetings": "<br>" + d.address + "<br>" + d.meta + "<br>" + d.details + "<br>Wheelchair Access: " + wchair}})
             res.send(aa_he + JSON.stringify(mappedData) + aa_fo);
             client.end();
             console.log('2) responded to request for aa meeting data');
