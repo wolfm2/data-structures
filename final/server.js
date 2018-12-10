@@ -223,65 +223,43 @@ app.get('/sensor', function(req, res) {
 });
 
 // create templates
-var aa_he = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>AA Meetings</title>
-  <meta name="description" content="Meetings of AA in Manhattan">
-  <meta name="author" content="AA">
-  <!-- <link rel="stylesheet" href="css/styles.css?v=1.0"> -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
-   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-   crossorigin=""/>
-</head>
-<body>
-<div id="mapid" style="width: 600px; height: 400px;"></div>
-<div id="meetings">this is a <br>test</div>
-
-  <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
-   integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
-   crossorigin=""></script>
-  <script>
-  
-  function GetTimeStr(date_obj) {
-	  // formats a javascript Date object into a 12h AM/PM time string
-	  var hour = date_obj.getHours();
-	  var minute = date_obj.getMinutes();
-	  var amPM = (hour > 11) ? "pm" : "am";
-	  if(hour > 12) {
-	    hour -= 12;
-	  } else if(hour == 0) {
-	    hour = "12";
-	  }
-	  if(minute < 10) {
-	    minute = "0" + minute;
-	  }
-	  return hour + ":" + minute + amPM;
-	}
+var aa_he = `
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	  <meta charset="utf-8">
+	  <title>AA Meetings</title>
+	  <meta name="description" content="Meetings of AA in Manhattan">
+	  <meta name="author" content="AA">
+	  <!-- <link rel="stylesheet" href="css/styles.css?v=1.0"> -->
+	  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+	   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+	   crossorigin=""/>
+	</head>
+	<body>
+		<table>
+			<tr>
+				<td>
+				<div id="mapid" style="width: 600px; height: 400px;"></div>
+				</td>
+				<td style="text-align: left; vertical-align: top; background: LIGHTBLUE; padding: 10px;">
+				<div id="meetings">this is a <br>test</div>
+				</td>
+			</tr>
+		</table>
 	
-  function showData(e) {
-    console.log(this.getLatLng())
-  }
-  
-  var data = 
+	  <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+	   integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+	   crossorigin=""></script>
+	  <script>
+	  var data = 
   `;
   
 var aa_fo = `;
-    var mymap = L.map('mapid').setView([40.7829,-73.9654], 11);
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mapbox.streets',
-        // accessToken: 'your.mapbox.access.token'
-        accessToken: 'pk.eyJ1Ijoidm9ucmFtc3kiLCJhIjoiY2pveGF0aDV2MjIyOTNsbWxlb2hhMmR4dCJ9.JJdYD_jWgRwUeJkDWiBz3w'
-    }).addTo(mymap);
-    for (var i=0; i<data.length; i++) {
-        L.marker( [data[i].lat, data[i].lon] ).bindPopup(data[i].title + data[i].meetings).addTo(mymap).on('mouseover', showData);;
-    }
-    </script>
-    </body>
-    </html>`;
+	</script>
+  <script src="js/aa-main.js"></script>
+	</body>
+	</html>`;
     
 // respond to requests for /aameetings
 app.get('/aa', function(req, res) {
@@ -299,8 +277,7 @@ app.get('/aa', function(req, res) {
     var hr = 60 * 60;
     var now = new Date()
     var startT = parseInt(now.getTime() / 1000)  % (24 * hr);  // get sec since day started
-    startT = 82800;
-    var endT = startT + (4 * hr) // 4hrs
+    var endT = startT + (6 * hr) // 4hrs
     // I didn't see meetings close to midnight but just to cover the edge case...
     if (endT > 24 * hr)  // don't roll past midnight
       endT = 24*hr;
@@ -319,7 +296,7 @@ app.get('/aa', function(req, res) {
             // test [{lat:'40.734636', lon:'-73.994997', meetings:'stuff'}]
             var mappedData = qres.rows.map((d,i) => {
 							var wchair = d.wchair=='0'?'No':'Yes';
-							return {"lat":d.lat, "lon":d.long, "beg":d.tbeg, "end":d.tend, "typ":d.ttype, "title":d.title, "meetings": "<br>" + d.address + "<br>" + d.meta + "<br>" + d.details + " Wheelchair access: " + wchair}})
+							return {"lat":d.lat, "lon":d.long, "beg":d.tbeg, "end":d.tend, "typ":d.ttype, "title":d.title, "meetings": "<br>" + d.address + "<br>" + d.meta + "<br>" + d.details + " Wheelchair Access: " + wchair}})
             res.send(aa_he + JSON.stringify(mappedData) + aa_fo);
             client.end();
             console.log('2) responded to request for aa meeting data');
