@@ -142,14 +142,13 @@ AWS.config.secretAccessKey = process.env.AWS_KEY;
 AWS.config.region = "us-east-1";
 
 var fs  = require("fs");
-var array //= fs.readFileSync('tools/data/se.dat').toString().split('\n');
+var array; // the testfile = fs.readFileSync('tools/data/se.dat').toString().split('\n');
 
 var min = 60;
 var hr = min * 60;
 var day = hr * 24;
 
-// respond to requests for /sensor
-app.get('/se', function(req, res) {
+function prepData(rows) {
   var dArr = []; // data array
   
 	var weekday = new Array(7);
@@ -160,15 +159,20 @@ app.get('/se', function(req, res) {
 	weekday[4] = "Thursday";
 	weekday[5] = "Friday";
 	weekday[6] = "Saturday";
-
+	
+	array = rows;
 // function test() {	
 	array.forEach((d,i) => {
 		if (i%2 == 1 || i > array.length - 2) // if odd or done
 		  return;
 		
 		console.log(i);  
-		from = (JSON.parse(d.replace(/'/g, "\"")).t) - 5 * hr;
-		to = (JSON.parse(array[parseInt(i)+1].replace(/'/g, "\"")).t) - 5 * hr;
+		// for testfile
+		// from = (JSON.parse(d.replace(/'/g, "\"")).t) - 5 * hr;
+		// to = (JSON.parse(array[parseInt(i)+1].replace(/'/g, "\"")).t) - 5 * hr;
+		// for db
+		from = d.sensortime;
+		to = array[parseInt(i)+1].sensortime;
 		console.log('from: ', weekday[new Date(from * 1000).getDay()], new Date(from * 1000));
 		console.log(from + 5 * hr);
 		console.log('to: ',   weekday[new Date(to   * 1000).getDay()], new Date(to * 1000));
@@ -191,10 +195,28 @@ app.get('/se', function(req, res) {
 		
 	});
 	
+	return(dArr);
+}
+
+// respond to requests for /sensor
+app.get('/se', function(req, res) {
 	
-	res.send(se_he + JSON.stringify(dArr) + se_fo);
-//}
-//test()
+	const client = new Pool(db_credentials);
+	var q = `SELECT sensortime FROM sensorData WHERE sensortime >= 1542220527;`;
+
+	client.connect();
+	client.query(q, (qerr, qres) => {
+			if (qerr) { throw qerr }
+			else {
+					// res.send(qres.rows);
+					console.log(qres.rows);
+					var dArr = prepData(qres.rows);
+					console.log(dArr);
+					res.send(se_he + JSON.stringify(dArr) + se_fo);
+					client.end();
+					console.log('1) responded to request for sensor data');
+			}
+	});
 });
 
 // respond to requests for /sensor
@@ -209,7 +231,7 @@ app.get('/sensor', function(req, res) {
              //~ FROM sensorData
              //~ GROUP BY sensorday
              //~ ORDER BY sensorday;`;
-    var q = `SELECT sensorvalue FROM sensorData WHERE sensortime >= 1542220527;`;
+    var q = `SELECT sensortime FROM sensorData WHERE sensortime >= 1542220527;`;
 
     client.connect();
     client.query(q, (qerr, qres) => {
