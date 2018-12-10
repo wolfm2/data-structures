@@ -130,7 +130,7 @@ var AWS = require('aws-sdk');
 // AWS RDS credentials
 var db_credentials = new Object();
 db_credentials.user = 'wolfm2';
-db_credentials.host = process.env.AWSRDS_EP;
+db_credentials.host = 'instance.ce54cjiwuvvo.us-east-1.rds.amazonaws.com';
 db_credentials.database = 'mydb';
 db_credentials.password = process.env.AWSRDS_PW;
 db_credentials.port = 5432;
@@ -142,7 +142,7 @@ AWS.config.secretAccessKey = process.env.AWS_KEY;
 AWS.config.region = "us-east-1";
 
 var fs  = require("fs");
-var array = fs.readFileSync('tools/data/se.dat').toString().split('\n');
+var array //= fs.readFileSync('tools/data/se.dat').toString().split('\n');
 
 var min = 60;
 var hr = min * 60;
@@ -197,17 +197,19 @@ app.get('/se', function(req, res) {
 //test()
 });
 
+// respond to requests for /sensor
 app.get('/sensor', function(req, res) {
     
     // Connect to the AWS RDS Postgres database
     const client = new Pool(db_credentials);
 
     // SQL query 
-    var q = `SELECT EXTRACT(DAY FROM sensorTime) as sensorday,
-             AVG(sensorValue::int) as num_obs
-             FROM sensorData
-             GROUP BY sensorday
-             ORDER BY sensorday;`;
+    //~ var q = `SELECT EXTRACT(DAY FROM sensorTime) as sensorday,
+             //~ AVG(sensorValue::int) as num_obs
+             //~ FROM sensorData
+             //~ GROUP BY sensorday
+             //~ ORDER BY sensorday;`;
+    var q = `SELECT sensorvalue FROM sensorData WHERE sensortime >= 1542220527;`;
 
     client.connect();
     client.query(q, (qerr, qres) => {
@@ -220,8 +222,69 @@ app.get('/sensor', function(req, res) {
     });
 });
 
+// create templates
+var aa_he = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AA Meetings</title>
+  <meta name="description" content="Meetings of AA in Manhattan">
+  <meta name="author" content="AA">
+  <!-- <link rel="stylesheet" href="css/styles.css?v=1.0"> -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+   crossorigin=""/>
+</head>
+<body>
+<div id="mapid" style="width: 600px; height: 400px;"></div>
+<div id="meetings">this is a <br>test</div>
+
+  <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+   integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+   crossorigin=""></script>
+  <script>
+  
+  function GetTimeStr(date_obj) {
+	  // formats a javascript Date object into a 12h AM/PM time string
+	  var hour = date_obj.getHours();
+	  var minute = date_obj.getMinutes();
+	  var amPM = (hour > 11) ? "pm" : "am";
+	  if(hour > 12) {
+	    hour -= 12;
+	  } else if(hour == 0) {
+	    hour = "12";
+	  }
+	  if(minute < 10) {
+	    minute = "0" + minute;
+	  }
+	  return hour + ":" + minute + amPM;
+	}
+	
+  function showData(e) {
+    console.log(this.getLatLng())
+  }
+  
+  var data = 
+  `;
+  
+var aa_fo = `;
+    var mymap = L.map('mapid').setView([40.7829,-73.9654], 11);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox.streets',
+        // accessToken: 'your.mapbox.access.token'
+        accessToken: 'pk.eyJ1Ijoidm9ucmFtc3kiLCJhIjoiY2pveGF0aDV2MjIyOTNsbWxlb2hhMmR4dCJ9.JJdYD_jWgRwUeJkDWiBz3w'
+    }).addTo(mymap);
+    for (var i=0; i<data.length; i++) {
+        L.marker( [data[i].lat, data[i].lon] ).bindPopup(data[i].title + data[i].meetings).addTo(mymap).on('mouseover', showData);;
+    }
+    </script>
+    </body>
+    </html>`;
+    
 // respond to requests for /aameetings
-app.get('/aameetings', function(req, res) {
+app.get('/aa', function(req, res) {
     
     // Connect to the AWS RDS Postgres database
     const client = new Pool(db_credentials);
@@ -232,11 +295,32 @@ app.get('/aameetings', function(req, res) {
                  WHERE mtgday = 'Tuesday' and mtghour >= 19 
                  GROUP BY mtgaddress, mtglocation
                  ;`;
-
-    client.query(thisQuery, (qerr, qres) => {
+    
+    var hr = 60 * 60;
+    var now = new Date()
+    var startT = parseInt(now.getTime() / 1000)  % (24 * hr);  // get sec since day started
+    startT = 82800;
+    var endT = startT + (4 * hr) // 4hrs
+    // I didn't see meetings close to midnight but just to cover the edge case...
+    if (endT > 24 * hr)  // don't roll past midnight
+      endT = 24*hr;
+    
+    var days = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'];
+		var dayName = days[now.getDay()];
+    
+		var q = `SELECT lat, long, title, address, meta, details, wchair, tbeg, tend, ttype FROM aalocations WHERE day = '${dayName}' and tbeg >= ${startT} and tbeg < ${endT};`;
+    console.log(q);
+             
+    client.query(q, (qerr, qres) => {
         if (qerr) { throw qerr }
         else {
-            res.send(qres.rows);
+					  console.log(qres.rows);
+            // res.send(qres.rows);
+            // test [{lat:'40.734636', lon:'-73.994997', meetings:'stuff'}]
+            var mappedData = qres.rows.map((d,i) => {
+							var wchair = d.wchair=='0'?'No':'Yes';
+							return {"lat":d.lat, "lon":d.long, "beg":d.tbeg, "end":d.tend, "typ":d.ttype, "title":d.title, "meetings": "<br>" + d.address + "<br>" + d.meta + "<br>" + d.details + " Wheelchair access: " + wchair}})
+            res.send(aa_he + JSON.stringify(mappedData) + aa_fo);
             client.end();
             console.log('2) responded to request for aa meeting data');
         }
