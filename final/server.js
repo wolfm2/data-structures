@@ -303,7 +303,9 @@ app.get('/aa', function(req, res) {
     endT %= 24*hr; // Not many meetings close to midnight but just to cover the edge case...
     
     var days = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'];
-		var dayName = days[now.getDay()];
+		// var dayName = days[now.getDay()];
+		// bound to EST
+		var dayName = days[new Date(now.getTime() - (5 * hr * 1000)).getUTCDay()];
     
 		var q = `SELECT lat, long, title, address, meta, details, wchair, tbeg, tend, ttype FROM aalocations WHERE day = '${dayName}' and tbeg >= ${startT} and tbeg < ${endT};`;
     console.log(q);
