@@ -300,9 +300,7 @@ app.get('/aa', function(req, res) {
     var now = new Date()
     var startT = parseInt(now.getTime() / 1000)  % (24 * hr);  // get sec since day started
     var endT = startT + (6 * hr) // 4hrs
-    // I didn't see meetings close to midnight but just to cover the edge case...
-    if (endT > 24 * hr)  // don't roll past midnight
-      endT = 24*hr;
+    endT %= 24*hr; // Not many meetings close to midnight but just to cover the edge case...
     
     var days = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'];
 		var dayName = days[now.getDay()];
@@ -318,7 +316,8 @@ app.get('/aa', function(req, res) {
             // test [{lat:'40.734636', lon:'-73.994997', meetings:'stuff'}]
             var mappedData = qres.rows.map((d,i) => {
 							var wchair = d.wchair=='0'?'No':'Yes';
-							return {"lat":d.lat, "lon":d.long, "beg":d.tbeg, "end":d.tend, "typ":d.ttype, "title":d.title, "meetings": "<br>" + d.address + "<br>" + d.meta + "<br>" + d.details + "<br>Wheelchair Access: " + wchair}})
+							return {"lat":d.lat, "lon":d.long, "beg":d.tbeg, "end":d.tend, "typ":d.ttype, "title":d.title, "meetings": "<br>" + d.address + "<br>" + d.meta + "<br>" + d.details + "<br>Wheelchair Access: " + wchair};
+						});
             res.send(aa_he + JSON.stringify(mappedData) + aa_fo);
             client.end();
             console.log('2) responded to request for aa meeting data');
