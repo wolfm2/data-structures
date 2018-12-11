@@ -34,15 +34,20 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 }).addTo(mymap);
 
 data.forEach((d,i) => {
-		L.marker([d.lat, d.lon])
-			.bindPopup(d.title + d.meetings).addTo(mymap)
-			.on('mouseover', showData);
-		var key = d.lat.toString() + d.lon.toString();
-		if (!(key in timeDict)) {
-			timeDict[key] = d.title + "<br>";
-			// timeDict[key] = d.title;
-		} 
-		timeDict[key] += GetTimeStr(new Date(d.beg*1000)) + " " + GetTimeStr(new Date(d.end*1000)) + " " + d.typ + "<br>";
+	// correcting for bad data
+  if (d.title.includes("Citicorp Center")) {
+		d.lat = 40.7583;
+		d.lon = -73.9702;
+		}
+	L.marker([d.lat, d.lon])
+		.bindPopup(d.title + d.meetings).addTo(mymap)
+		.on('mouseover', showData);
+	var key = d.lat.toString() + d.lon.toString();
+	if (!(key in timeDict)) {
+		timeDict[key] = d.title + "<br>";
+		// timeDict[key] = d.title;
+	} 
+	timeDict[key] += GetTimeStr(new Date(d.beg*1000)) + " " + GetTimeStr(new Date(d.end*1000)) + " " + d.typ + "<br>";
 });
 
 var html = `<b>Meetings in time period specified: ${data.length}</b><br><br>Hover over markers for meetings.<br>Click for location information.`;
