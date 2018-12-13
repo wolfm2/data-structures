@@ -80,11 +80,11 @@ Gym was one of the main ways I unwound during the sample period.  Up until this 
 
 ## What It Does
 
-For the entire set of data, there are two selectors.  These are the three themes mentioned above (leg, arm, core).  Additionally, a second dropdown is populated with the exercise days.  Once the two are selected, the exercised I did that day are highlighted and the duration of each exercise is filled in.
+For the entire set of data, there are two selectors.  These are the three themes mentioned above (leg, arm, core) and a second dropdown populated with the exercise days.  Once the two are selected, the exercises I did that day are highlighted and the duration of each exercise is filled in.
 
 ## Binding Methods
 
-In each search, the theme was used as a partition key.  The query then gets all days for that key.  The db is designed to use a partition key in addition to a search key (the exercise date in epoch time).  While I origionally wrote the code to a specific query for the partition/search key combo, it infrequently created a delay in displaying the exercise information.  I changed the code to use only the partition key thinking that, even if a delay happens, it will only be once rather than potentially every time I change the date pulldown, and therefore be a better experience.
+In each search, the theme was used as a partition key.  The query then gets all days for that key.  The db is designed to use a partition key in addition to a search key (the exercise date in epoch time).  While I origionally wrote the code to a specific query for the partition/search key combo, it infrequently created a delay in displaying the exercise information.  I changed the code to use only the partition key thinking that, even if a delay happens, it will only be once rather than potentially every time I change the date pulldown (triggering another query), and therefore be a better experience.
 
 Additonally, I used xmlHTTP requestors built into jQuery for this one.  The HTML code stands by itself without being templated.  I used $.get() which is a very useful method that retrieves and parses JSON from a url in one go for more dynamic searches.  
 
