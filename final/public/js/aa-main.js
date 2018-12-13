@@ -35,7 +35,7 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 
 data.forEach((d,i) => {
 	// correcting for bad data
-  if (d.title.includes("Citicorp Center")) {
+  if (d.title.toLowerCase().includes("citicorp center")) {
 		d.lat = 40.7583;
 		d.lon = -73.9702;
 		}
