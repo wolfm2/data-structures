@@ -28,7 +28,7 @@ Mapped Data From server.js:
 return {"lat":d.lat, "lon":d.long, "beg":d.tbeg, "end":d.tend, "typ":d.ttype, "title":d.title, "meetings": "<br>" + d.address + "<br>" + d.meta + "<br>" + d.details + "<br>Wheelchair Access: " + wchair};
 
 
-Issues
+# Issues
 
 Several!  There were the handful of bugs which you might expect.  Working on the client code before I separated it from the template was very error-prone.  While I fixed several incorrect lat/lon lookups before I inserted the data into RDB, mapping revealed (at least) one (Citibank Center) which I did not catch.  These last minute ones I remediated in the server code.
 
@@ -36,14 +36,6 @@ The most unexpectedly worst one, which would have pointed to a more fundamental 
 
 Other than this, the node code was not the most reliable.  I had to build in several error handlers as one in twenty INSERTs would usually fail.  I handled most by successful re-INSERTing but a few stragglers required some manual attention.  In the end, all rows have been successfully entered into the database.
 
-
-
-visualization (functionality only)	
-mapping of the data to the visualization	
-integrity/accuracy of the data	
-query: restructuring/transforming/summarizing	
-query: efficiency	
-documentation and repo
 
 ## Sensor Project
 
