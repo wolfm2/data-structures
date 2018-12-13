@@ -45,7 +45,9 @@ Other than this, the node code was not the most reliable.  I had to build in sev
 
 ## Goals
 
-My initial goal was to visualize the difference between my partner and I when we close the door.  My assertion is that she closes the door much harder than I do.  My intuition suggests that there would be an inversely proportional accelerometer measurement (more powerful) when compared to how tired she is when walking through the door.  This was however, not to be since she got a chance to teach a seminar during the measurement period and was in Europe the entire time.  As a pivot, I realized that since my comings and goings as well as destinations were so limited during this time, I could use the timestamp to create a tounge-in-cheek visualization of My Boring Life.
+I have the accelerometer attached to my door.
+
+My initial goal was to visualize the difference between my partner and I when we close the door.  My assertion is that she closes the door much harder than I do.  My intuition suggests that there would be an inversely proportional accelerometer measurement (more powerful) when compared to how tired she is when walking through the door.  This was however, not to be since she got a chance to teach a seminar during the measurement period and was in Europe the entire time.  As a pivot, I realized that since my comings and goings as well as destinations were so limited during this time, I could use the timestamp to create a tongue-in-cheek visualization of My Boring Life.
 
 ## What It Does
 
@@ -64,7 +66,9 @@ If the delta between door closings is 45-90min I will assume I was at Gym
 
 ## Binding Methods
 
-This used the same method as above in that I wrote some HTML and included some fake data.  Once I had the main mechanic / css / HTML debugged, I removed the fake data, and split the HTML into a header and footer.  These two peices of HTML were then transfered by the server with the actual prepared data in between.  
+Using a map() function I broke all sensor readings into pairs which I assumed are leaving / returning door slams.  The map returns three bits of data which are leave time, destination, and duration at destination for each pair.
+
+This used the same method as above in that I wrote some HTML and included some fake data.  Once I had the main mechanic / css / HTML debugged, I removed the fake data, and split the HTML into a header and footer.  These two pieces of HTML were then transferred by the server with the actual prepared data in between.  
 
 
 ## Issues
@@ -84,9 +88,9 @@ For the entire set of data, there are two selectors.  These are the three themes
 
 ## Binding Methods
 
-In each search, the theme was used as a partition key.  The query then gets all days for that key.  The db is designed to use a partition key in addition to a search key (the exercise date in epoch time).  While I origionally wrote the code to a specific query for the partition/search key combo, it infrequently created a delay in displaying the exercise information.  I changed the code to use only the partition key thinking that, even if a delay happens, it will only be once rather than potentially every time I change the date pulldown (triggering another query), and therefore be a better experience.
+In each search, the theme was used as a partition key.  The query then gets all days for that key.  The db is designed to use a partition key in addition to a search key (the exercise date in epoch time).  While I originally wrote the code to a specific query for the partition/search key combo, it infrequently created a delay in displaying the exercise information.  I changed the code to use only the partition key thinking that, even if a delay happens, it will only be once rather than potentially every time I change the date pulldown (triggering another query), and therefore be a better experience.
 
-Additonally, I used xmlHTTP requestors built into jQuery for this one.  The HTML code stands by itself without being templated.  I used $.get() which is a very useful method that retrieves and parses JSON from a url in one go for more dynamic searches.  
+Additionally, I used xmlHTTP requestors built into jQuery for this one.  The HTML code stands by itself without being templated.  I used $.get() which is a very useful method that retrieves and parses JSON from a url in one go for more dynamic searches.  
 
 ## Issues
 
