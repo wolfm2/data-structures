@@ -13,7 +13,7 @@ My use case was to provide the most near-term (chronologically) help to seekers 
 
 ## What It Does
 
-To the above end, the map starts in a mode which shows all meetings from current time till midnight.  I started the project with a 4hr window but as I tested this left a handful of maps with very few markers.  Upping the window seemed a reasonable compromise.  I originally intended to put meeting times in the pop-up bubble but this was too messy for places with several meetings.  I therefore moved all meeting information to the DIV on the right and used the pop-up for title and meta-information (if it existed).
+To the above end, the map starts in a mode which shows all meetings from current time and for 6hrs.  I started the project with a 4hr window but as I tested this left a handful of maps with very few markers.  Upping the window seemed a reasonable compromise.  I originally intended to put meeting times in the pop-up bubble but this was too messy for places with several meetings.  I therefore moved all meeting information to the DIV on the right and used the pop-up for title and meta-information (if it existed).
 
 Pop-ups of course respond to clicking, and the meeting information is filled in on a map marker hover event.
 

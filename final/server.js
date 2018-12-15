@@ -301,14 +301,19 @@ app.get('/aa', function(req, res) {
     var startT = parseInt(now.getTime() / 1000)  % (24 * hr);  // get sec since day started
     var endT = startT + (6 * hr) // 4hrs
     endT %= 24*hr; // Not many meetings close to midnight but just to cover the edge case...
-    endT = 86400;
+    // endT = 86400;
     
     var days = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'];
 		// var dayName = days[now.getDay()];
 		// bound to EST
 		var dayName = days[new Date(now.getTime() - (5 * hr * 1000)).getUTCDay()];
     
-		var q = `SELECT lat, long, title, address, meta, details, wchair, tbeg, tend, ttype FROM aalocations WHERE day = '${dayName}' and tbeg >= ${startT} and tbeg < ${endT};`;
+    var q;
+    if (endT < startT)
+			q = `SELECT lat, long, title, address, meta, details, wchair, tbeg, tend, ttype FROM aalocations WHERE day = '${dayName}' and tbeg >= ${startT} or tbeg < ${endT};`;
+		else
+			q = `SELECT lat, long, title, address, meta, details, wchair, tbeg, tend, ttype FROM aalocations WHERE day = '${dayName}' and tbeg >= ${startT} and tbeg < ${endT};`;
+
     console.log(q);
              
     client.query(q, (qerr, qres) => {
