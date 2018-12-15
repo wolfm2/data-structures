@@ -1,6 +1,8 @@
 # EC2 Site links for all projects
 http://54.146.142.168:8080/ (or click on screenshots below)
 
+Note:  The DynamoDB went down twice for me in the last month with an 'expired key' error.  Luckily, my key was not expired and the node server worked fine when restarted.  All programs have been working fine for the last week or so as of today 12.15.18.   If any are in a strange state, email me and I will restart the server.
+
 # AA Project
 
 [![AA Project](img/aa.png)](http://54.146.142.168:8080/aa)
