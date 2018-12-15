@@ -55,7 +55,7 @@ app.get('/aameetings', function(req, res) {
                  //~ GROUP BY mtgaddress, mtglocation
                  //~ ;`;
     //var thisQuery = `SELECT * FROM aadata;`;
-    var thisQuery = "SELECT address, wchair, meta, ttype FROM aalocations WHERE day = 'Wednesdays' and tbeg >= 6120;";
+    var thisQuery = "SELECT tbeg, address, wchair, meta, ttype FROM aalocations WHERE day = 'Saturdays' and tbeg >= 6120;";
 
     client.query(thisQuery, (qerr, qres) => {
         if (qerr) { throw qerr }
