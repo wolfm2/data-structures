@@ -301,6 +301,7 @@ app.get('/aa', function(req, res) {
     var startT = parseInt(now.getTime() / 1000)  % (24 * hr);  // get sec since day started
     var endT = startT + (6 * hr) // 4hrs
     endT %= 24*hr; // Not many meetings close to midnight but just to cover the edge case...
+    endT = 86400;
     
     var days = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'];
 		// var dayName = days[now.getDay()];
